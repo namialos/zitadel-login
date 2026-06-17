@@ -75,6 +75,9 @@ kotlin {
 
             implementation(libs.kermit)
             implementation(libs.compottie)
+            // Webview
+            implementation(libs.compose.webview.multiplatform)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
