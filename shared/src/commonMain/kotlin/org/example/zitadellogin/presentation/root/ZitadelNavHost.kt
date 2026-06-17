@@ -18,6 +18,7 @@ import org.example.zitadellogin.presentation.callback.AuthCallbackRoute
 import org.example.zitadellogin.presentation.callback.AuthCallbackViewModel
 import org.example.zitadellogin.presentation.home.HomeRoute
 import org.example.zitadellogin.presentation.home.HomeViewModel
+import org.example.zitadellogin.presentation.keyclocklogin.LoginWithKeycloakRoute
 import org.example.zitadellogin.presentation.login.LoginRoute
 import org.example.zitadellogin.presentation.login.LoginViewModel
 import org.example.zitadellogin.presentation.splash.SplashRoute
@@ -103,6 +104,11 @@ fun ZitadelNavHost(
                     }
                 },
             )
+        }
+        composable(Routes.KeyClockLogin) {
+            LoginWithKeycloakRoute("", onBackPressed = {
+
+            })
         }
     }
 }
