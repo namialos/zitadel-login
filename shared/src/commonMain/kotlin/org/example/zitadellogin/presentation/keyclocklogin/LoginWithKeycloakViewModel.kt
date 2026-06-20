@@ -18,7 +18,7 @@ data class LoginWithKeycloakUiState(
 )
 
 class LoginWithKeycloakViewModel(
-    private val dispatcherProvider: Dispatchers
+
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginWithKeycloakUiState())
@@ -50,7 +50,7 @@ class LoginWithKeycloakViewModel(
     }
 
     private fun sendAccessToken() {
-        viewModelScope.launch(dispatcherProvider.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             delay(500)
 
             val json = ""

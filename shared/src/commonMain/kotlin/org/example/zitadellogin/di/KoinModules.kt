@@ -21,6 +21,7 @@ import org.example.zitadellogin.domain.usecase.ObserveAuthStateUseCase
 import org.example.zitadellogin.domain.usecase.RestoreSessionFromStorageUseCase
 import org.example.zitadellogin.presentation.callback.AuthCallbackViewModel
 import org.example.zitadellogin.presentation.home.HomeViewModel
+import org.example.zitadellogin.presentation.keyclocklogin.LoginWithKeycloakViewModel
 import org.example.zitadellogin.presentation.login.LoginViewModel
 import org.example.zitadellogin.presentation.splash.SplashViewModel
 import org.koin.core.module.Module
@@ -58,6 +59,7 @@ fun sharedAppModule(): Module = module {
     viewModelOf(::LoginViewModel)
     viewModelOf(::AuthCallbackViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::LoginWithKeycloakViewModel)
 }
 
 fun appModules(): List<Module> = listOf(platformNativeModule(), sharedAppModule())

@@ -76,7 +76,10 @@ fun ZitadelNavHost(
         }
         composable(Routes.Login) {
             val vm: LoginViewModel = koinViewModel()
-            LoginRoute(viewModel = vm)
+            LoginRoute(viewModel = vm, onLoginWithKeyClock = {
+                navController.navigate(Routes.KeyClockLogin)
+            })
+
         }
         composable(Routes.AuthCallback) {
             val vm: AuthCallbackViewModel = koinViewModel()
@@ -106,7 +109,7 @@ fun ZitadelNavHost(
             )
         }
         composable(Routes.KeyClockLogin) {
-            LoginWithKeycloakRoute("", onBackPressed = {
+            LoginWithKeycloakRoute("https://px-chat.zulipchat.com/", onBackPressed = {
 
             })
         }

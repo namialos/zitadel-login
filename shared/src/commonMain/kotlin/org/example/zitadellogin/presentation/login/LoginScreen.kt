@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LoginRoute(
     viewModel: LoginViewModel,
+    onLoginWithKeyClock:()-> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -65,6 +66,9 @@ fun LoginRoute(
                     isBusy = state.isBusy,
                     onLogin = { viewModel.onStartLogin() },
                     onRegister = { viewModel.onStartRegistration() },
+                    onLoginWithKeyClock = {
+                        onLoginWithKeyClock.invoke()
+                    }
                 )
             }
         }

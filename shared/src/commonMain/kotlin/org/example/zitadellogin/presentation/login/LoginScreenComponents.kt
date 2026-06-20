@@ -103,6 +103,7 @@ fun LoginBottomActions(
     isBusy: Boolean,
     onLogin: () -> Unit,
     onRegister: () -> Unit,
+    onLoginWithKeyClock: () -> Unit,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -111,6 +112,11 @@ fun LoginBottomActions(
         LoginPrimaryButton(
             text = FaStrings.loginButton,
             onClick = onLogin,
+            loading = isBusy,
+        )
+        LoginPrimaryButton(
+            text = FaStrings.loginWithKeyClockButton,
+            onClick = onLoginWithKeyClock,
             loading = isBusy,
         )
         LoginSecondaryButton(

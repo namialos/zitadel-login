@@ -10,6 +10,7 @@ object FaStrings {
     const val loginSubtitleNative =
         "با زدن دکمهٔ ورود، به صفحهٔ رسمی زیتادل هدایت می‌شوید. نام کاربری، رمز عبور و کد تأیید فقط در همان صفحه وارد می‌شود."
     const val loginButton = "ورود با زیتادل"
+    const val loginWithKeyClockButton = "ورود با کیکلاک"
     const val registerButton = "ساخت حساب کاربری"
     const val loading = "لطفاً صبر کنید…"
     const val retry = "تلاش مجدد"
