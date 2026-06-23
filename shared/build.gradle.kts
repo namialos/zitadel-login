@@ -77,6 +77,7 @@ kotlin {
             implementation(libs.compottie)
             // Webview
             implementation(libs.compose.webview.multiplatform)
+            implementation(libs.material.icons.extended.v173)
 
         }
         commonTest.dependencies {

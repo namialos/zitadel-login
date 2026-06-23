@@ -17,68 +17,119 @@ data class LoginWithKeycloakUiState(
     val tokenScript: String? = null
 )
 
-class LoginWithKeycloakViewModel(
+class LoginWithKeycloakViewModel : ViewModel() {
 
-) : ViewModel() {
+    private val _uiState =
+        MutableStateFlow(
+            LoginWithKeycloakUiState()
+        )
 
-    private val _uiState = MutableStateFlow(LoginWithKeycloakUiState())
-    val uiState: StateFlow<LoginWithKeycloakUiState> = _uiState.asStateFlow()
+    val uiState =
+        _uiState.asStateFlow()
 
-    private var isTokenSent = false
+    private var handledCode = false
 
     fun onPageStarted() {
-        _uiState.value = _uiState.value.copy(
-            showProgress = true
-        )
+        _uiState.value =
+            _uiState.value.copy(
+                showProgress = true
+            )
     }
 
     fun onPageFinished() {
-        _uiState.value = _uiState.value.copy(
-            showProgress = false
-        )
+        _uiState.value =
+            _uiState.value.copy(
+                showProgress = false
+            )
+    }
 
-        if (!isTokenSent) {
-            sendAccessToken()
-            isTokenSent = true
+    fun onProgressChanged(
+        progress: Float
+    ) {
+        _uiState.value =
+            _uiState.value.copy(
+                loadProgress = progress
+            )
+    }
+
+    fun onRedirect(
+        url: String
+    ) {
+
+        if (
+            handledCode ||
+            !url.startsWith(
+                "http://localhost:4202"
+            )
+        ) return
+
+        val code =
+            extractQueryParam(
+                url,
+                "code"
+            ) ?: return
+
+        handledCode = true
+
+        exchangeCode(
+            code
+        )
+    }
+
+    private fun exchangeCode(
+        code: String
+    ) {
+
+        viewModelScope.launch {
+
+            println(
+                "Authorization Code = $code"
+            )
+
+            // next step:
+            // call token endpoint
+
+
         }
     }
 
-    fun onProgressChanged(progress: Float) {
-        _uiState.value = _uiState.value.copy(
-            loadProgress = progress
-        )
-    }
+   /* private fun sendAccessToken(
+        accessToken: String
+    ) {
 
-    private fun sendAccessToken() {
-        viewModelScope.launch(Dispatchers.IO) {
-            delay(500)
-
-            val json = ""
-
-            val script = """
-                document.dispatchEvent(
-                    new CustomEvent(
-                        "mobile-auth",
-                        {
-                            detail: {
-                                data: '$json'
-                            }
-                        }
-                    )
-                );
+        val json =
+            """
+            {
+                "accessToken":"$accessToken"
+            }
             """.trimIndent()
 
-            _uiState.value = _uiState.value.copy(
+        val script =
+            """
+            document.dispatchEvent(
+                new CustomEvent(
+                    "mobile-auth",
+                    {
+                        detail:{
+                            data:$json
+                        }
+                    }
+                )
+            );
+            """.trimIndent()
+
+        _uiState.value =
+            _uiState.value.copy(
                 tokenScript = script
             )
-        }
     }
 
     fun consumeTokenScript() {
-        _uiState.value = _uiState.value.copy(
-            tokenScript = null
-        )
-    }
+        _uiState.value =
+            _uiState.value.copy(
+                tokenScript = null
+            )
+    }*/
 
     fun logout(
         onSuccess: () -> Unit
@@ -87,4 +138,31 @@ class LoginWithKeycloakViewModel(
 
         }
     }
+}
+
+private fun extractQueryParam(
+    url: String,
+    key: String
+): String? {
+
+    val query =
+        url.substringAfter(
+            "?",
+            ""
+        )
+
+    return query
+        .split("&")
+        .firstNotNullOfOrNull {
+
+            val pair =
+                it.split("=")
+
+            pair
+                .takeIf {
+                    it.size == 2 &&
+                            it[0] == key
+                }
+                ?.get(1)
+        }
 }

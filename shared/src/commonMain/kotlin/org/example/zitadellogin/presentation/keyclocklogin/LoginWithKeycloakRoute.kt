@@ -1,26 +1,49 @@
 package org.example.zitadellogin.presentation.keyclocklogin
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.multiplatform.webview.jsbridge.*
-import com.multiplatform.webview.web.*
+import com.multiplatform.webview.jsbridge.IJsMessageHandler
+import com.multiplatform.webview.jsbridge.JsMessage
+import com.multiplatform.webview.jsbridge.WebViewJsBridge
+import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
+import com.multiplatform.webview.web.LoadingState
+import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.WebViewNavigator
+import com.multiplatform.webview.web.WebViewState
+import com.multiplatform.webview.web.rememberWebViewNavigator
+import com.multiplatform.webview.web.rememberWebViewState
+import org.example.zitadellogin.presentation.keyclocklogin.utils.authUrl
 import org.koin.compose.viewmodel.koinViewModel
+
 
 @Composable
 fun LoginWithKeycloakRoute(
-    url: String,
+    url: String = authUrl,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     viewModel: LoginWithKeycloakViewModel = koinViewModel(),
     onBackPressed: () -> Unit
@@ -58,6 +81,18 @@ fun LoginWithKeycloakRoute(
         }
     }
 
+
+
+    LaunchedEffect(
+        webViewState.lastLoadedUrl
+    ) {
+
+        webViewState.lastLoadedUrl
+            ?.let(
+                viewModel::onRedirect
+            )
+    }
+
     when (val loading = webViewState.loadingState) {
 
         LoadingState.Initializing ->
@@ -72,12 +107,12 @@ fun LoginWithKeycloakRoute(
             )
     }
 
-    LaunchedEffect(state.tokenScript) {
+/*    LaunchedEffect(state.tokenScript) {
         state.tokenScript?.let {
             navigator.evaluateJavaScript(it)
             viewModel.consumeTokenScript()
         }
-    }
+    }*/
 
     BackPressHandler {
         if (navigator.canGoBack) {
@@ -118,10 +153,40 @@ fun LoginWithKeycloakScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(top = 24.dp)
             .background(backgroundColor),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        // Toolbar
+        Box(
+            modifier = Modifier.padding(16.dp).fillMaxWidth()
+        ) {
+
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp).align(Alignment.CenterStart)
+                    .clickable { onBack.invoke() },
+            )
+
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp).align(Alignment.CenterEnd)
+                    .clickable { onClose.invoke() },
+            )
+
+            Text(
+                text = "KeyClock",
+                style = MaterialTheme.typography.labelLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.align(Alignment.Center)
+            )
+
+
+        }
 
         // Progress
         if (uiState.showProgress) {

@@ -61,6 +61,44 @@ class AuthRemoteDataSource(
         return parseTokenResponse(response.status.value, rawBody)
     }
 
+    suspend fun exchangeKeycloakCode(
+        code: String,
+        verifier: String,
+    ): Result<TokenResponseDto> =
+        unwrap {
+            val tokenUrl = AuthConfig.keycloakTokenEndpoint()
+
+            AppLogger.i(">>> REQUEST Keycloak token POST $tokenUrl")
+
+            val response = publicClient.post(tokenUrl) {
+                contentType(ContentType.Application.FormUrlEncoded)
+
+                setBody(
+                    FormDataContent(
+                        Parameters.build {
+                            append("grant_type", "authorization_code")
+                            append("client_id", AuthConfig.KEYCLOAK_CLIENT_ID)
+                            append("code", code)
+                            append("redirect_uri", AuthConfig.KEYCLOAK_REDIRECT_URI)
+                            append("code_verifier", verifier)
+                        }
+                    )
+                )
+            }
+
+            val raw = response.bodyAsText()
+
+            logHttpResponse("Keycloak token", response, raw)
+
+            when (val result = parseTokenResponse(response.status.value, raw)) {
+                is TokenExchangeResult.Success -> result.dto
+
+                is TokenExchangeResult.OAuthError -> {
+                    throw IllegalStateException(result.toUserMessage())
+                }
+            }
+        }
+
     suspend fun refreshToken(refreshToken: String): TokenExchangeResult {
         val tokenUrl = AuthConfig.tokenEndpoint()
 

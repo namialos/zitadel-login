@@ -109,8 +109,8 @@ fun ZitadelNavHost(
             )
         }
         composable(Routes.KeyClockLogin) {
-            LoginWithKeycloakRoute("https://px-chat.zulipchat.com/", onBackPressed = {
-
+            LoginWithKeycloakRoute(onBackPressed = {
+                navController.popBackStack()
             })
         }
     }
